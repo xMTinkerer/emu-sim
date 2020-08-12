@@ -1,0 +1,19 @@
+steps:
+    # build the container image
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/eadu-426/emu-back:$COMMIT_SHA', '.']
+      # push the container image to Container Registry
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'gcr.io/eadu-426/emu-back:$COMMIT_SHA']
+      # Deploy container image to Cloud Run
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args:
+          - 'run'
+          - 'deploy'
+          - 'emu-back'
+          - '--image'
+          - 'gcr.io/eadu-426/emu-back:$COMMIT_SHA'
+          - '--region'
+          - 'us-west1'
+          - '--platform'
+          - 'managed'
